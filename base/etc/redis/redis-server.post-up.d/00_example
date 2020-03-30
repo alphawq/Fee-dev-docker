@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Example script executed after redis-server has started.
+#
+# All executable files within this directory are executed in lexical sort
+# order. Filenames must consist entirely of ASCII upper- and lower-case
+# letters, digits, underscores, and hyphens. If the script returns with a
+# non-zero exit code, no further scripts are run.
+#
+# Scripts are run by the 'redis' user and associated run-time environment.
+#
+# Example:
+#
+#    redis-cli SCRIPT LOAD "$(cat /path/to/script.lua)" >/dev/null
+#
+# Scripts should be idempotent so that multiple calls to (eg.)
+# "/etc/init.d/redis-server start" does not result in unintended consequences.
+
+set -eu
+
+exit 0
