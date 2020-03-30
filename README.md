@@ -21,7 +21,7 @@ MySQL-5.7              =>      端口号: 3306
                                 密码: 123456
                                 默认数据库: fe_dev
 ElasticSearch-6.6.2    =>      端口号: 9200
-Kibana-6.6.2           =>      端口号: 5601
+Kibana-6.6.2           =>      端口号: 5601 （启动较慢，如有需要的话，可以在`compose.yml`中启用相关配置，默认关闭）
 ```
 
 ## 使用`adminer`管理`mysql`
@@ -41,7 +41,9 @@ Kibana-6.6.2           =>      端口号: 5601
     ![es_02](./assets/es_02.jpg)
 - [ElasticSearch Head](https://chrome.google.com/webstore/detail/elasticsearch-head/ffmkiejjmecolpfloofpjologoblkegm)
 
-## 使用`Kibana`管理集群
+## 使用`Kibana`管理集群 （可选）
+
+Kibana 初始化连接时间较长，可以通过`docker log [Kibana Container Name]`的命令形式来查看是否启动并成功连接`ES`
 
 - 服务地址：`127.0.0.1:5601`
 
@@ -74,3 +76,9 @@ Kibana-6.6.2           =>      端口号: 5601
   // 或
   cd ~/www/fee-docker && docker-compose up -d
   ```
+
+# 查看容器运行状态
+
+- docker ps
+- docker logs [container NAME]
+- docker run

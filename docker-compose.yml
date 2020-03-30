@@ -57,11 +57,12 @@ services:
       - '3306:3306'
   dev_local_elasticsearch:
     image: elasticsearch:6.6.2
-    container_name: dev_local_en0_container
+    container_name: dev_local_elasticsearch_container
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - discovery.zen.minimum_master_nodes=2
     ulimits:
       memlock:
         soft: -1
@@ -73,12 +74,13 @@ services:
       - '9200:9200'
   dev_local_elasticsearch2:
     image: elasticsearch:6.6.2
-    container_name: dev_local_en1_container
+    container_name: dev_local_elasticsearch2_container
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
-      - 'discovery.zen.ping.unicast.hosts=dev_local_en0_container'
+      - discovery.zen.minimum_master_nodes=2
+      - 'discovery.zen.ping.unicast.hosts=dev_local_elasticsearch_container'
     ulimits:
       memlock:
         soft: -1
@@ -86,11 +88,11 @@ services:
     volumes:
       - ./data/esdata2:/usr/share/elasticsearch/data
       - ./base/etc/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-  dev_local_kibana:
-    image: docker.elastic.co/kibana/kibana:6.6.2
-    container_name: dev_local_kibana_container
-    environment:
-      # 这个hosts的配置必须要跟ES的container_name相同才能访问
-      ELASTICSEARCH_HOSTS: http://dev_local_en0_container
-    ports:
-      - '5601:5601'
+  # dev_local_kibana:
+  #   image: docker.elastic.co/kibana/kibana:6.6.2
+  #   container_name: dev_local_kibana_container
+  #   environment:
+  #     # 这个hosts的配置必须要跟ES的container_name相同才能访问
+  #     ELASTICSEARCH_HOSTS: http://dev_local_elasticsearch_container
+  #   ports:
+  #     - '5601:5601'
