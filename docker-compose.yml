@@ -1,29 +1,27 @@
 ###############################################################################
-#                          Generated on phpdocker.io                          #
+#                         Author: alphawq@foxmail.com                         #
 ###############################################################################
 version: '3.1'
 services:
-  dev_local_memcached:
-    image: memcached:1.5-alpine
-    container_name: dev_local_memcached_container
-    volumes:
-      # 配置时区
-      - ./base/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
-    ports:
-      - '11211:11211'
-
-  dev_local_redis:
-    image: redis:4.0-alpine
-    container_name: dev_local_redis_container
-    volumes:
-      - ./base/etc/redis:/etc/redis
-      - ./log/redis:/var/log/redis
-      - ./base/var/lib/redis:/var/lib/redis
-      - ./base/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
-    command: ['redis-server', '/etc/redis/redis.conf']
-    ports:
-      - '6379:6379'
-
+  # dev_local_memcached:
+  #   image: memcached:1.5-alpine
+  #   container_name: dev_local_memcached_container
+  #   volumes:
+  #     # 配置时区
+  #     - ./base/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
+  #   ports:
+  #     - '11211:11211'
+  # dev_local_redis:
+  #   image: redis:4.0-alpine
+  #   container_name: dev_local_redis_container
+  #   volumes:
+  #     - ./base/etc/redis:/etc/redis
+  #     - ./log/redis:/var/log/redis
+  #     - ./base/var/lib/redis:/var/lib/redis
+  #     - ./base/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
+  #   command: ['redis-server', '/etc/redis/redis.conf']
+  #   ports:
+  #     - '6379:6379'
   # dev_local_mongo:
   #   image: mongo:4.0-xenial
   #   container_name: dev_local_mongo_container
@@ -31,37 +29,35 @@ services:
   #     - ./base/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
   #   ports:
   #     - '27017:27017'
-  dev_local_mysql_adminer:
-    image: adminer
-    container_name: dev_local_adminer_container
-    restart: always
-    ports:
-      - 8080:8080
-
-  dev_local_mysql:
-    image: mysql:5.7.21
-    container_name: dev_local_mysql_container
-    volumes:
-      - ./base/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
-      - ./base/etc/mysql/conf.d:/etc/mysql/conf.d
-    # 强行指定编码
-    command:
-      [
-        'mysqld',
-        '--character-set-server=utf8mb4',
-        '--collation-server=utf8mb4_general_ci',
-      ]
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_USER: 'root'
-      MYSQL_PASSWORD: '123456'
-      MYSQL_DATABASE: 'fe_dev'
-    ports:
-      - '3306:3306'
-
+  # dev_local_mysql_adminer:
+  #   image: adminer
+  #   container_name: dev_local_adminer_container
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  # dev_local_mysql:
+  #   image: mysql:5.7
+  #   container_name: dev_local_mysql_container
+  #   volumes:
+  #     - ./base/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
+  #     - ./base/etc/mysql/conf.d:/etc/mysql/conf.d
+  #   # 强行指定编码
+  #   command:
+  #     [
+  #       'mysqld',
+  #       '--character-set-server=utf8mb4',
+  #       '--collation-server=utf8mb4_general_ci',
+  #     ]
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 123456
+  #     # MYSQL_USER: 'root'
+  #     MYSQL_PASSWORD: '123456'
+  #     MYSQL_DATABASE: 'fe_dev'
+  #   ports:
+  #     - '3306:3306'
   dev_local_elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
-    container_name: dev_local_elasticsearch_container
+    image: elasticsearch:6.6.2
+    container_name: dev_local_en0_container
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
@@ -74,15 +70,15 @@ services:
       - ./data/esdata1:/usr/share/elasticsearch/data
       - ./base/etc/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ports:
-      - 9200:9200
+      - '9200:9200'
   dev_local_elasticsearch2:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
-    container_name: dev_local_elasticsearch2_container
+    image: elasticsearch:6.6.2
+    container_name: dev_local_en1_container
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
-      - 'discovery.zen.ping.unicast.hosts=dev_local_elasticsearch'
+      - 'discovery.zen.ping.unicast.hosts=dev_local_en0_container'
     ulimits:
       memlock:
         soft: -1
@@ -90,3 +86,11 @@ services:
     volumes:
       - ./data/esdata2:/usr/share/elasticsearch/data
       - ./base/etc/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  dev_local_kibana:
+    image: docker.elastic.co/kibana/kibana:6.6.2
+    container_name: dev_local_kibana_container
+    environment:
+      # 这个hosts的配置必须要跟ES的container_name相同才能访问
+      ELASTICSEARCH_HOSTS: http://dev_local_en0_container
+    ports:
+      - '5601:5601'

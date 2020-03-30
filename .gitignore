@@ -12,7 +12,7 @@
 *.swo
 
 
-
+data/
 base/var/*
 base/data0/www/htdocs
 base/data0/www/*
